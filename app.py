@@ -463,5 +463,3 @@ if usar_vader and usar_tfidf and col_texto and "sentimento_esperado" in df_raw.c
         st.plotly_chart(fig_comp, use_container_width=True)
 
 
-
-st.markdown("<br><br><center style='color:#444;font-size:.8rem;'>Dashboard gerado por Claude · Anthropic</center>", unsafe_allow_html=True)
