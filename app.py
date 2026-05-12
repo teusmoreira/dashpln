@@ -101,22 +101,12 @@ def gerar_wordcloud(textos, titulo, cor):
 
 @st.cache_data(show_spinner="🔄 Carregando dataset...")
 def carregar_dados():
-    import kagglehub
-    path = kagglehub.dataset_download(
-        "beatrizmsarmento/relatos-de-consumidores-do-site-consumidor-gov-br"
-    )
-    arquivos = glob.glob(os.path.join(path, "*.json"))
-    if not arquivos:
-        st.error("Nenhum arquivo JSON encontrado.")
-        st.stop()
+    # Lê diretamente o arquivo parquet que estará junto com o app.py
+    return pd.read_parquet("dataset_consumidor.parquet")
 
-    with open(arquivos[0], "rb") as f:
-        raw = f.read()
-    texto = raw.decode("utf-8", errors="ignore")
-    ultimo = texto.rfind("}")
-    texto_ok = texto[:ultimo + 1] + "]"
-    data = json.loads(texto_ok)
-    return pd.DataFrame(data)
+# ── Sidebar ───────────────────────────────────────────────
+st.sidebar.markdown("### 🛒 Filtros & Controles")
+# ... resto do código continua igual ...
 
 # ── Sidebar ───────────────────────────────────────────────
 st.sidebar.markdown("### 🛒 Filtros & Controles")
