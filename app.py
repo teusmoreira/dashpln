@@ -33,9 +33,9 @@ st.set_page_config(
 # ── CSS personalizado ────────────────────────────────────
 st.markdown("""
 <style>
-@import url(\'https://fonts.googleapis.com/css2?family=Sora:wght@300;600;800&family=JetBrains+Mono:wght@400;700&display=swap\');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
-html, body, [class*="css"] { font-family: \'Sora\', sans-serif; }
+html, body, [class*="css"] { font-family: 'Sora', sans-serif; }
 
 [data-testid="stMetric"] {
     background: #0f0f1a;
@@ -87,6 +87,7 @@ def vader_sentimento(texto):
     return "neutral"
 
 def gerar_wordcloud(textos, titulo, cor):
+    stopwords_pt = {"de", "a", "o", "que", "e", "do", "da", "em", "um", "para", "é", "com", "não", "uma", "os", "no", "se", "na", "por", "mais", "as", "dos", "como", "mas", "foi", "ao", "ele", "das", "tem", "à", "seu", "sua", "ou", "ser", "quando", "muito", "há", "nos", "já", "está", "eu", "também", "só", "pelo", "pela", "até", "isso", "ela", "entre", "era", "depois", "sem", "mesmo", "aos", "ter", "seus", "quem", "nas", "me", "esse", "eles", "estão", "você", "tinha", "foram", "essa", "num", "nem", "suas", "meu", "às", "minha", "têm", "numa", "pelos", "elas", "havia", "seja", "qual", "será", "nós", "tenho", "lhe", "deles", "essas", "esses", "pelas", "este", "fosse", "dele", "tu", "te", "vocês", "vos", "lhes", "meus", "minhas", "teu", "tua", "teus", "tuas", "nosso", "nossa", "nossos", "nossas", "dela", "delas", "esta", "estes", "estas", "aquele", "aquela", "aqueles", "aquelas", "isto", "aquilo", "pois", "já", "daí", "dia", "xxx"}
     texto_junto = " ".join(textos.dropna().astype(str).tolist())
     wc = WordCloud(
         width=700, height=350,
@@ -94,6 +95,7 @@ def gerar_wordcloud(textos, titulo, cor):
         colormap="cool",
         max_words=80,
         collocations=False,
+        stopwords=stopwords_pt
     ).generate(texto_junto)
     buf = io.BytesIO()
     wc.to_image().save(buf, format="PNG")
@@ -103,10 +105,6 @@ def gerar_wordcloud(textos, titulo, cor):
 def carregar_dados():
     # Lê diretamente o arquivo parquet que estará junto com o app.py
     return pd.read_parquet("dataset_consumidor.parquet")
-
-# ── Sidebar ───────────────────────────────────────────────
-st.sidebar.markdown("### 🛒 Filtros & Controles")
-# ... resto do código continua igual ...
 
 # ── Sidebar ───────────────────────────────────────────────
 st.sidebar.markdown("### 🛒 Filtros & Controles")
@@ -226,6 +224,7 @@ if "empresa" in df_raw.columns:
             .mean()
             .reindex(top_emp["empresa"])
             .reset_index()
+            .fillna(0)
         )
         sent_emp.columns = ["empresa", "score"]
 
@@ -449,7 +448,7 @@ if usar_vader and usar_tfidf and col_texto and "sentimento_esperado" in df_raw.c
 
     if rows:
         df_comp = pd.DataFrame(rows).set_index("Modelo")
-        df_comp_pct = df_comp.applymap(lambda v: f"{v:.2%}")
+        df_comp_pct = df_comp.map(lambda v: f"{v:.2%}")
         st.dataframe(df_comp_pct, use_container_width=True)
 
         df_melt = df_comp.reset_index().melt(id_vars="Modelo", var_name="Métrica", value_name="Score")
@@ -472,8 +471,8 @@ user_input = st.text_area("Cole um relato para classificar:", height=120,
 if user_input.strip():
     pred = vader_sentimento(user_input)
     cor  = CORES_SENTIMENTO.get(pred, "#ffffff")
-    st.markdown(f"""<div style=\'padding:16px;border-left:5px solid {cor};background:#0f0f1a;border-radius:8px;\'>
-        <span style=\'font-size:1.4rem;font-weight:700;color:{cor};\'>{pred.upper() if pred else "—"}</span>
+    st.markdown(f"""<div style='padding:16px;border-left:5px solid {cor};background:#0f0f1a;border-radius:8px;'>
+        <span style='font-size:1.4rem;font-weight:700;color:{cor};'>{pred.upper() if pred else "—"}</span>
     </div>""", unsafe_allow_html=True)
 
-st.markdown("<br><br><center style=\'color:#444;font-size:.8rem;\'>Dashboard gerado por Claude · Anthropic</center>", unsafe_allow_html=True)
+st.markdown("<br><br><center style='color:#444;font-size:.8rem;'>Dashboard gerado por Claude · Anthropic</center>", unsafe_allow_html=True)
