@@ -462,17 +462,6 @@ if usar_vader and usar_tfidf and col_texto and "sentimento_esperado" in df_raw.c
         fig_comp.update_layout(paper_bgcolor="#0f0f1a", plot_bgcolor="#0f0f1a", font_color="#c0c0e0", yaxis_tickformat=".0%")
         st.plotly_chart(fig_comp, use_container_width=True)
 
-# ═══════════════════════════════════════════════════════
-#  SEÇÃO 9 · Classificador interativo
-# ═══════════════════════════════════════════════════════
-st.markdown('<div class="secao-header">9 · Classify ao Vivo (VADER)</div>', unsafe_allow_html=True)
-user_input = st.text_area("Cole um relato para classificar:", height=120,
-                           placeholder="Ex: Produto chegou com defeito, atendimento péssimo...")
-if user_input.strip():
-    pred = vader_sentimento(user_input)
-    cor  = CORES_SENTIMENTO.get(pred, "#ffffff")
-    st.markdown(f"""<div style='padding:16px;border-left:5px solid {cor};background:#0f0f1a;border-radius:8px;'>
-        <span style='font-size:1.4rem;font-weight:700;color:{cor};'>{pred.upper() if pred else "—"}</span>
-    </div>""", unsafe_allow_html=True)
+
 
 st.markdown("<br><br><center style='color:#444;font-size:.8rem;'>Dashboard gerado por Claude · Anthropic</center>", unsafe_allow_html=True)
