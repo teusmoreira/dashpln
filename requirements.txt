@@ -1,0 +1,9 @@
+streamlit
+kagglehub
+vaderSentiment
+scikit-learn
+plotly
+wordcloud
+Pillow
+pandas
+numpy
